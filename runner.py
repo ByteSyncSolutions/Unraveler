@@ -17,6 +17,9 @@ def Main():
                       help="Include to dictate which Intializer function to use (LargeWeightInitializer) | (DefaultWeightInitializer)")
     parser.add_option('-f', dest="initializerLoad", type="string", \
                       help="Include to dictate which Network to use and run Network")
+    parser.add_option('-o', dest="outFile", type="string", \
+                      help="Include to dictate the filename to write with training iteration information", \
+                      default=None)
     parser.add_option('-e', dest="epochs", type="int", \
                       help="Include to specify the number of epochs to have the network run through")
     parser.add_option('-r', dest="regularizer", type="string", \
@@ -40,37 +43,50 @@ def Main():
         # Exit without doing anything further
         exit(0)
 
+    # load the mnist data from /data/mnist.pkl.gz
+    training_data, validation_data, test_data = mnist_loader.load_data_wrapper()
+
+    # if the user specified a weight initalization file setup the network with those weights
+    # otherwise use the appropriate weight initializer
     if not (options.initializerLoad == None):
-
-        print ("Options Selected:")
-        print("Network Used: {}").format(options.initializerLoad)
-        print("Epochs: {}").format(options.epochs)
-        print("Regularizer: {}").format(options.regularizer)
-
-        training_data, validation_data, test_data = mnist_loader.load_data_wrapper()
-        net = nt.load(options.initializerLoad)
-
-        if (options.regularizer == "MaxFixed"):
-            net.SGD(training_data, options.epochs, 10, 0.5, lmda=10, evaluation_data=test_data, monitor_evaluation_accuracy=True,
-                    monitor_training_accuracy=True)
-        elif (options.regularizer == "MinFixed"):
-            net.SGD(training_data, options.epochs, 10, 0.5, lmda=0.1, evaluation_data=test_data, monitor_evaluation_accuracy=True,
-                    monitor_training_accuracy=True)
-        elif (options.regularizer == "Linear"):
-            for i in range(1, options.epochs):
-                if i % 10 == 0:
-                    counter += 1;
-                    net.SGD(training_data, 1, 10, 0.5, lmda=10/i, evaluation_data=test_data, monitor_evaluation_accuracy=True,
-                        monitor_training_accuracy=True)
-        elif (options.regularizer == "Exponential"):
-            for i in range(1..options.epochs):
-                if i % 10 == 0:
-                    counter += 1;
-                    net.SGD(training_data, 1, 10, 0.5, lmda=10/(i^2), evaluation_data=test_data, monitor_evaluation_accuracy=True,
-                    monitor_training_accuracy=True)
+        if (options.initializingType == "LargeWeightInitializer"):
+            net = nt.Network([784, 100, 10], cost=nt.QuadraticCost, initializer=nt.LargeWeightInitializer)
         else:
-            print("Please specify a correct regularizer option for -r")
-            exit(0)
+            net = nt.Network([784, 100, 10], cost=nt.QuadraticCost, initializer=nt.DefaultWeightInitializer)
+        net.load(options.initializerLoad)
+    elif (options.initializingType == "LargeWeightInitializer"):
+        net = nt.Network([784, 100, 10], cost=nt.QuadraticCost, initializer=nt.LargeWeightInitializer)
+    else:
+        net = nt.Network([784, 100, 10], cost=nt.QuadraticCost, initializer=nt.DefaultWeightInitializer)
+
+    print ("Options Selected:")
+    if (options.initializerLoad):
+        print("Network Used: {}".format(options.initializerLoad))
+    print("Epochs: {:d}".format(options.epochs))
+    print("Regularizer: {}".format(options.regularizer))
+
+
+    if (options.regularizer == "MaxFixed"):
+        net.SGD(training_data, options.epochs, 10, 0.5, lmbda=10, evaluation_data=test_data, monitor_evaluation_accuracy=True,
+                monitor_training_accuracy=True, output_file_name=options.outFile)
+    elif (options.regularizer == "MinFixed"):
+        net.SGD(training_data, options.epochs, 10, 0.5, lmbda=0.1, evaluation_data=test_data, monitor_evaluation_accuracy=True,
+                monitor_training_accuracy=True, output_file_name=options.outFile)
+    elif (options.regularizer == "Linear"):
+        for i in range(1, options.epochs):
+            if i % 10 == 0:
+                counter += 1;
+                net.SGD(training_data, 1, 10, 0.5, lmbda=10/i, evaluation_data=test_data, monitor_evaluation_accuracy=True,
+                    monitor_training_accuracy=True, output_file_name=options.outFile)
+    elif (options.regularizer == "Exponential"):
+        for i in range(1, options.epochs):
+            if i % 10 == 0:
+                counter += 1;
+                net.SGD(training_data, 1, 10, 0.5, lmbda=10/(i^2), evaluation_data=test_data, monitor_evaluation_accuracy=True,
+                monitor_training_accuracy=True, output_file_name=options.outFile)
+    else:
+        print("Please specify a correct regularizer option for -r")
+        exit(0)
 
 if __name__ == "__main__":
     Main()
