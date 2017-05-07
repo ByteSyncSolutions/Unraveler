@@ -1,5 +1,5 @@
 import optparse
-from network2 import Network as nt
+import network2 as nt
 import mnist_loader
 
 # Command Line Interface Options and Runner
@@ -35,7 +35,7 @@ def Main():
             filename = input("Please indicate filename to save Network as:")
             net.save(filename)
         else:
-            print("Need to specify InitializingType with a -f <type> option.")
+            print("Need to specify InitializingType with a -t <type> option.")
             exit(0)
         # Exit without doing anything further
         exit(0)
@@ -63,7 +63,7 @@ def Main():
                     net.SGD(training_data, 1, 10, 0.5, lmda=10/i, evaluation_data=test_data, monitor_evaluation_accuracy=True,
                         monitor_training_accuracy=True)
         elif (options.regularizer == "Exponential"):
-            for i in range(1. options.epochs):
+            for i in range(1..options.epochs):
                 if i % 10 == 0:
                     counter += 1;
                     net.SGD(training_data, 1, 10, 0.5, lmda=10/(i^2), evaluation_data=test_data, monitor_evaluation_accuracy=True,
