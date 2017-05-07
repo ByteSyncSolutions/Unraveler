@@ -67,23 +67,39 @@ def Main():
 
 
     if (options.regularizer == "MaxFixed"):
-        net.SGD(training_data, options.epochs, 10, 0.5, lmbda=10, evaluation_data=test_data, monitor_evaluation_accuracy=True,
-                monitor_training_accuracy=True, output_file_name=options.outFile)
+        net.SGD(training_data, options.epochs, 10, 0.5, lmbda=10, evaluation_data=test_data,
+                monitor_evaluation_accuracy=True,
+                monitor_evaluation_cost=True,
+                monitor_training_accuracy=True,
+                monitor_training_cost=True,
+                output_file_name=options.outFile)
     elif (options.regularizer == "MinFixed"):
-        net.SGD(training_data, options.epochs, 10, 0.5, lmbda=0.1, evaluation_data=test_data, monitor_evaluation_accuracy=True,
-                monitor_training_accuracy=True, output_file_name=options.outFile)
+        net.SGD(training_data, options.epochs, 10, 0.5, lmbda=0.1, evaluation_data=test_data,
+                monitor_evaluation_accuracy=True,
+                monitor_evaluation_cost=True,
+                monitor_training_accuracy=True,
+                monitor_training_cost=True,
+                output_file_name=options.outFile)
     elif (options.regularizer == "Linear"):
         for i in range(1, options.epochs):
             if i % 10 == 0:
                 counter += 1;
-                net.SGD(training_data, 1, 10, 0.5, lmbda=10/i, evaluation_data=test_data, monitor_evaluation_accuracy=True,
-                    monitor_training_accuracy=True, output_file_name=options.outFile)
+                net.SGD(training_data, 1, 10, 0.5, lmbda=10/i, evaluation_data=test_data,
+                        monitor_evaluation_accuracy=True,
+                        monitor_evaluation_cost=True,
+                        monitor_training_accuracy=True,
+                        monitor_training_cost=True,
+                        output_file_name=options.outFile)
     elif (options.regularizer == "Exponential"):
         for i in range(1, options.epochs):
             if i % 10 == 0:
                 counter += 1;
-                net.SGD(training_data, 1, 10, 0.5, lmbda=10/(i^2), evaluation_data=test_data, monitor_evaluation_accuracy=True,
-                monitor_training_accuracy=True, output_file_name=options.outFile)
+                net.SGD(training_data, 1, 10, 0.5, lmbda=10/(i^2), evaluation_data=test_data,
+                        monitor_evaluation_accuracy=True,
+                        monitor_evaluation_cost=True,
+                        monitor_training_accuracy=True,
+                        monitor_training_cost=True,
+                        output_file_name=options.outFile)
     else:
         print("Please specify a correct regularizer option for -r")
         exit(0)
