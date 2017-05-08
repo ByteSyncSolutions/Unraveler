@@ -6,6 +6,10 @@ import mnist_loader
 
 # Need to add a way to capture the result data and place in a file for analysis.
 
+MIN_LAMBDA = 0.001
+MAX_LAMBDA = 5
+EXPONENTIAL_DECAY_RATE = 1.05
+
 def Main():
 
     counter = 0
@@ -49,11 +53,7 @@ def Main():
     # if the user specified a weight initalization file setup the network with those weights
     # otherwise use the appropriate weight initializer
     if not (options.initializerLoad == None):
-        if (options.initializingType == "LargeWeightInitializer"):
-            net = nt.Network([784, 100, 10], cost=nt.QuadraticCost, initializer=nt.LargeWeightInitializer)
-        else:
-            net = nt.Network([784, 100, 10], cost=nt.QuadraticCost, initializer=nt.DefaultWeightInitializer)
-        net.load(options.initializerLoad)
+        net = nt.load(options.initializerLoad)
     elif (options.initializingType == "LargeWeightInitializer"):
         net = nt.Network([784, 100, 10], cost=nt.QuadraticCost, initializer=nt.LargeWeightInitializer)
     else:
@@ -67,46 +67,42 @@ def Main():
 
 
     if (options.regularizer == "MaxFixed"):
-        net.SGD(training_data, options.epochs, 10, 0.5, lmbda=10, evaluation_data=test_data,
+        net.SGD(training_data, options.epochs, 10, 0.5, lmbda=MAX_LAMBDA, evaluation_data=test_data,
                 monitor_evaluation_accuracy=True,
                 monitor_evaluation_cost=True,
                 monitor_training_accuracy=True,
                 monitor_training_cost=True,
                 output_file_name=options.outFile)
     elif (options.regularizer == "MinFixed"):
-        net.SGD(training_data, options.epochs, 10, 0.5, lmbda=0.1, evaluation_data=test_data,
+        net.SGD(training_data, options.epochs, 10, 0.5, lmbda=MIN_LAMBDA, evaluation_data=test_data,
                 monitor_evaluation_accuracy=True,
                 monitor_evaluation_cost=True,
                 monitor_training_accuracy=True,
                 monitor_training_cost=True,
                 output_file_name=options.outFile)
     elif (options.regularizer == "Linear"):
+        current = MAX_LAMBDA
         for i in range(1, options.epochs):
-            if i % 10 == 0:
-                counter += 1;
-                net.SGD(training_data, 1, 10, 0.5, lmbda=10/counter, evaluation_data=test_data,
-                        monitor_evaluation_accuracy=True,
-                        monitor_evaluation_cost=True,
-                        monitor_training_accuracy=True,
-                        monitor_training_cost=True,
-                        output_file_name=options.outFile)
+            net.SGD(training_data, 1, 10, 0.5, lmbda=current, evaluation_data=test_data,
+                    monitor_evaluation_accuracy=True,
+                    monitor_evaluation_cost=True,
+                    monitor_training_accuracy=True,
+                    monitor_training_cost=True,
+                    output_file_name=options.outFile)
+
+            current = current - (MAX_LAMBDA - MIN_LAMBDA) / (options.epochs - 1)
     elif (options.regularizer == "Exponential"):
         for i in range(1, options.epochs):
-            if i % 10 == 0:
-                counter += 1;
-                net.SGD(training_data, 1, 10, 0.5, lmbda=10/(counter^2), evaluation_data=test_data,
-                        monitor_evaluation_accuracy=True,
-                        monitor_evaluation_cost=True,
-                        monitor_training_accuracy=True,
-                        monitor_training_cost=True,
-                        output_file_name=options.outFile)
+            current = MIN_LAMBDA + (MAX_LAMBDA - MIN_LAMBDA) / (EXPONENTIAL_DECAY_RATE ** (i - 1))
+            net.SGD(training_data, 1, 10, 0.5, lmbda=10/(counter^2), evaluation_data=test_data,
+                    monitor_evaluation_accuracy=True,
+                    monitor_evaluation_cost=True,
+                    monitor_training_accuracy=True,
+                    monitor_training_cost=True,
+                    output_file_name=options.outFile)
     else:
         print("Please specify a correct regularizer option for -r")
         exit(0)
 
 if __name__ == "__main__":
     Main()
-
-
-
-
