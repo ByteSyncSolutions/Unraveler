@@ -6,7 +6,7 @@ import mnist_loader
 
 def Main():
 
-    counter = 0
+    counter = 1
 
     parser = optparse.OptionParser()
     parser.add_option('-i', dest="initializing", type="string", \
@@ -83,7 +83,6 @@ def Main():
         for i in range(1, options.epochs):
             if i % 10 == 0:
                 counter += 1
-
             net.SGD(training_data, 1, 10, 0.5, lmbda=10/counter, evaluation_data=test_data,
                         monitor_evaluation_accuracy=True,
                         monitor_evaluation_cost=True,
@@ -95,7 +94,6 @@ def Main():
         for i in range(1, options.epochs):
             if i % 10 == 0:
                 counter += 1
-
             net.SGD(training_data, 1, 10, 0.5, lmbda=10/(counter^2), evaluation_data=test_data,
                         monitor_evaluation_accuracy=True,
                         monitor_evaluation_cost=True,
