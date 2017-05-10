@@ -4,15 +4,11 @@ import mnist_loader
 
 # Command Line Interface Options and Runner
 
-# Need to add a way to capture the result data and place in a file for analysis.
-
 MIN_LAMBDA = 0.001
 MAX_LAMBDA = 5
 EXPONENTIAL_DECAY_RATE = 1.05
 
 def Main():
-
-    counter = 0
 
     parser = optparse.OptionParser()
     parser.add_option('-i', dest="initializing", type="string", \
@@ -65,7 +61,6 @@ def Main():
     print("Epochs: {:d}".format(options.epochs))
     print("Regularizer: {}".format(options.regularizer))
 
-
     if (options.regularizer == "MaxFixed"):
         net.SGD(training_data, options.epochs, 10, 0.5, lmbda=MAX_LAMBDA, evaluation_data=test_data,
                 monitor_evaluation_accuracy=True,
@@ -73,6 +68,7 @@ def Main():
                 monitor_training_accuracy=True,
                 monitor_training_cost=True,
                 output_file_name=options.outFile)
+
     elif (options.regularizer == "MinFixed"):
         net.SGD(training_data, options.epochs, 10, 0.5, lmbda=MIN_LAMBDA, evaluation_data=test_data,
                 monitor_evaluation_accuracy=True,
@@ -80,6 +76,7 @@ def Main():
                 monitor_training_accuracy=True,
                 monitor_training_cost=True,
                 output_file_name=options.outFile)
+
     elif (options.regularizer == "Linear"):
         current = MAX_LAMBDA
         for i in range(1, options.epochs):
