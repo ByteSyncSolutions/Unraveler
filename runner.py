@@ -94,7 +94,7 @@ def Main():
     elif (options.regularizer == "Exponential"):
         for i in range(1, options.epochs):
             current = MIN_LAMBDA + (MAX_LAMBDA - MIN_LAMBDA) / (EXPONENTIAL_DECAY_RATE ** (i - 1))
-            net.SGD(training_data, 1, 10, 0.5, lmbda=10/(counter^2), evaluation_data=test_data,
+            net.SGD(training_data, 1, 10, 0.5, lmbda=current, evaluation_data=test_data,
                     monitor_evaluation_accuracy=True,
                     monitor_evaluation_cost=True,
                     monitor_training_accuracy=True,
