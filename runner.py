@@ -1,5 +1,4 @@
 import optparse
-import network2 as nt
 import mnist_loader
 
 # Command Line Interface Options and Runner
@@ -25,9 +24,16 @@ def Main():
     parser.add_option('-r', dest="regularizer", type="string", \
                       help="Include to dictate what type of regularization to perform on the Network. Types include \
                            (MaxFixed) | (MinFIxed) | (Linear) | (Exponential)")
+    parser.add_option('-n', dest="network", type="string", \
+                      help="Include to dictate what network module to boot into the code execution. (Orig or Non-Orig)A")
 
     (options, args) = parser.parse_args()
 
+    if (options.network == "orig"):
+        import network2 as nt
+    else:
+        import network4 as nt
+    
     if (options.initializing == "Y"):
         if (options.initializingType == "LargeWeightInitializer"):
             net = nt.Network([784, 100, 10], cost=nt.QuadraticCost, initializer=nt.LargeWeightInitializer)
